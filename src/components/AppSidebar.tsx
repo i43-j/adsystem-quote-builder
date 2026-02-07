@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import adsystemsLogo from "@/assets/adsystems-logo.png";
 
 const navItems = [
   {
@@ -64,21 +66,18 @@ export function AppSidebar() {
       <SidebarContent className="gradient-sidebar">
         {/* Brand header */}
         <div className="p-4 pb-2">
-          {!collapsed && (
-            <div className="flex items-center gap-3 px-2">
-              <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center shadow-sm">
-                <FileText className="w-4 h-4 text-primary-foreground" />
-              </div>
-              <div>
-                <h2 className="text-sm font-semibold text-sidebar-primary-foreground">
-                  Adsystem
-                </h2>
-                <p className="text-[11px] text-sidebar-foreground/60">
-                  {user?.branch?.toUpperCase()} branch
-                </p>
-              </div>
-            </div>
-          )}
+          <div className={`flex items-center ${collapsed ? "justify-center" : "gap-3 px-2"}`}>
+            <img
+              src={adsystemsLogo}
+              alt="Adsystems logo"
+              className={`shrink-0 object-contain ${collapsed ? "w-8 h-8" : "w-10 h-10"}`}
+            />
+            {!collapsed && (
+              <h2 className="text-sm font-semibold text-sidebar-primary-foreground">
+                Adsystems
+              </h2>
+            )}
+          </div>
         </div>
 
         {/* Navigation */}
@@ -139,15 +138,20 @@ export function AppSidebar() {
           {!collapsed ? (
             <div className="flex items-center gap-3">
               <Avatar className="w-8 h-8 shrink-0">
-                <AvatarImage src={user?.picture} />
+                <AvatarImage src={user?.picture} referrerPolicy="no-referrer" />
                 <AvatarFallback className="bg-sidebar-accent text-sidebar-foreground text-xs">
                   {initials}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-sidebar-foreground truncate">
-                  {user?.name}
-                </p>
+                <div className="flex items-center gap-1.5">
+                  <p className="text-xs font-medium text-sidebar-foreground truncate">
+                    {user?.name}
+                  </p>
+                  <Badge variant="secondary" className="text-[9px] px-1.5 py-0 h-4 uppercase tracking-wider shrink-0">
+                    {user?.branch}
+                  </Badge>
+                </div>
                 <p className="text-[10px] text-sidebar-foreground/50 truncate">
                   {user?.email}
                 </p>
@@ -162,14 +166,22 @@ export function AppSidebar() {
               </Button>
             </div>
           ) : (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={logout}
-              className="w-full h-8 text-sidebar-foreground/50 hover:text-sidebar-foreground hover:bg-sidebar-accent"
-            >
-              <LogOut className="w-4 h-4" />
-            </Button>
+            <div className="flex flex-col items-center gap-2">
+              <Avatar className="w-8 h-8">
+                <AvatarImage src={user?.picture} referrerPolicy="no-referrer" />
+                <AvatarFallback className="bg-sidebar-accent text-sidebar-foreground text-xs">
+                  {initials}
+                </AvatarFallback>
+              </Avatar>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={logout}
+                className="w-full h-7 text-sidebar-foreground/50 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+              </Button>
+            </div>
           )}
         </div>
       </SidebarFooter>
