@@ -1,12 +1,12 @@
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { FileText, Shield } from "lucide-react";
+import { Shield } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { getGoogleAccountsId } from "@/lib/google-auth";
-import { Button } from "@/components/ui/button";
+import adsystemsLogo from "@/assets/adsystems-logo.png";
 
 export function LoginScreen() {
-  const { error, loginAsDemo } = useAuth();
+  const { error } = useAuth();
   const googleBtnRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -57,15 +57,19 @@ export function LoginScreen() {
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.1, duration: 0.4 }}
-              className="inline-flex items-center justify-center w-16 h-16 rounded-2xl gradient-primary mb-4 shadow-lg"
+              className="inline-flex items-center justify-center w-20 h-20 mb-4"
             >
-              <FileText className="w-8 h-8 text-primary-foreground" />
+              <img
+                src={adsystemsLogo}
+                alt="Adsystems logo"
+                className="w-full h-full object-contain"
+              />
             </motion.div>
             <h1 className="text-2xl font-bold text-foreground tracking-tight">
-              Adsystem
+              Adsystem Tools
             </h1>
             <p className="text-muted-foreground mt-1 text-sm">
-              Quotation Generator
+              Sign in to continue
             </p>
           </div>
 
@@ -83,24 +87,6 @@ export function LoginScreen() {
                 {error}
               </motion.div>
             )}
-
-            {/* Divider */}
-            <div className="w-full flex items-center gap-3 my-2">
-              <div className="flex-1 h-px bg-border" />
-              <span className="text-xs text-muted-foreground uppercase tracking-wider">
-                or
-              </span>
-              <div className="flex-1 h-px bg-border" />
-            </div>
-
-            {/* Demo mode */}
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={loginAsDemo}
-            >
-              Continue in Preview Mode
-            </Button>
           </div>
 
           {/* Footer */}
