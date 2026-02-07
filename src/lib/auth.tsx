@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { GOOGLE_CLIENT_ID, ALLOWED_USERS } from "@/lib/constants";
 import { getGoogleAccountsId } from "@/lib/google-auth";
-import type { AuthUser } from "@/types/quotation";
+import type { AuthUser } from "@/lib/types";
 
 interface AuthContextType {
   user: AuthUser | null;

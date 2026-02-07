@@ -1,5 +1,5 @@
 import { N8N_WEBHOOK_URL } from "./constants";
-import type { QuotationFormData, SubmissionResult } from "@/types/quotation";
+import type { QuotationFormData, SubmissionResult } from "@/lib/types";
 
 export async function submitQuotation(
   formData: QuotationFormData,
