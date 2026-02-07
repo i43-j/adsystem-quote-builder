@@ -1,11 +1,11 @@
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Shield } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/lib/auth";
 import { getGoogleAccountsId } from "@/lib/google-auth";
 import adsystemsLogo from "@/assets/adsystems-logo.png";
 
-export function LoginScreen() {
+export function LoginPage() {
   const { error } = useAuth();
   const googleBtnRef = useRef<HTMLDivElement>(null);
 
