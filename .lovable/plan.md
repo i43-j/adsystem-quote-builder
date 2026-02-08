@@ -1,110 +1,77 @@
 
 
-# Restructure: Fully Minimal File System
+# Create Project Documentation
 
 ## Summary
-Flatten the project from ~70 files across 8+ folders down to ~25 files in 3 main folders. Inline sub-components into their parent pages, delete 33 unused UI component files, and consolidate scattered single-file folders into `lib/`.
+Create a comprehensive `docs/README.md` file that covers the full project: file structure, styling system, endpoints, how to add/edit sidebar items, form patterns, authentication flow, and development conventions.
 
-## Final File Structure
+## File to Create
 
-```text
-src/
-  assets/
-    adsystems-logo.png          (unchanged)
-  components/
-    ui/
-      avatar.tsx                (kept)
-      badge.tsx                 (kept)
-      button.tsx                (kept)
-      input.tsx                 (kept)
-      label.tsx                 (kept)
-      select.tsx                (kept)
-      separator.tsx             (kept)
-      sheet.tsx                 (kept)
-      sidebar.tsx               (kept)
-      skeleton.tsx              (kept)
-      sonner.tsx                (kept)
-      textarea.tsx              (kept)
-      toast.tsx                 (kept)
-      toaster.tsx               (kept, import path updated)
-      tooltip.tsx               (kept)
-  lib/
-    api.ts                      (unchanged)
-    auth.tsx                    (moved from contexts/AuthContext.tsx)
-    constants.ts                (unchanged)
-    google-auth.ts              (unchanged)
-    types.ts                    (moved from types/quotation.ts)
-    use-mobile.tsx              (moved from hooks/use-mobile.tsx)
-    use-toast.ts                (moved from hooks/use-toast.ts)
-    utils.ts                    (unchanged)
-  pages/
-    InvoicePage.tsx             (unchanged)
-    LoginPage.tsx               (moved from components/LoginScreen.tsx)
-    NotFound.tsx                (unchanged)
-    PurchaseOrderPage.tsx       (unchanged)
-    QuotationPage.tsx           (rewritten: inlines QuotationForm, ItemCard, TotalsPanel)
-  App.tsx                       (rewritten: inlines AppLayout, NavLink, AppSidebar)
-  index.css                     (unchanged)
-  main.tsx                      (unchanged)
-```
+**`docs/README.md`** -- a single documentation file covering everything:
 
-## Detailed Changes
+### Sections
 
-### 1. Delete 33 unused UI components
-Remove from `src/components/ui/`:
-accordion, alert, alert-dialog, aspect-ratio, breadcrumb, calendar, card, carousel, chart, checkbox, collapsible, command, context-menu, dialog, drawer, dropdown-menu, form, hover-card, input-otp, menubar, navigation-menu, pagination, popover, progress, radio-group, resizable, scroll-area, slider, switch, table, tabs, toggle, toggle-group
+**1. Project Overview**
+- What the app does (internal tool for generating quotations, invoices, purchase orders for Adsystems)
+- Tech stack: React 18, Vite, TypeScript, Tailwind CSS, Framer Motion
 
-Also delete:
-- `src/components/ui/use-toast.ts` (a re-export shim, no longer needed)
-- `src/App.css` (Vite boilerplate, not used)
+**2. File Structure**
+- Full tree of `src/` with one-line descriptions of every file
+- Organized by folder: `pages/`, `lib/`, `components/ui/`, `assets/`
+- Explain the "fully minimal" philosophy: no extra folders, sub-components inlined into pages
 
-### 2. Delete files that will be inlined or moved
-- `src/components/quotation/QuotationForm.tsx`
-- `src/components/quotation/QuotationItemCard.tsx`
-- `src/components/quotation/TotalsPanel.tsx`
-- `src/components/AppLayout.tsx`
-- `src/components/AppSidebar.tsx`
-- `src/components/NavLink.tsx`
-- `src/components/LoginScreen.tsx`
-- `src/contexts/AuthContext.tsx`
-- `src/types/quotation.ts`
-- `src/hooks/use-mobile.tsx`
-- `src/hooks/use-toast.ts`
-- `src/pages/Index.tsx` (just a redirect, will be inlined into App.tsx)
-- `src/pages/QuotationPage.tsx` (will be recreated with inlined content)
+**3. Styling & Layout**
+- CSS variables defined in `index.css` (color tokens like `--primary`, `--background`, etc.)
+- How to use them: `hsl(var(--primary))` or Tailwind classes like `bg-primary`, `text-muted-foreground`
+- Custom utility classes: `glass-card`, `gradient-primary`, `gradient-sidebar`, `text-gradient`
+- Tailwind config highlights: custom animations (`fade-in`, `slide-in-right`, `scale-in`, `pulse-soft`), `success` color palette, `sidebar` color palette
+- Layout structure: `SidebarProvider` wrapping a flex container, sticky header with `SidebarTrigger`, main content area with responsive padding
 
-### 3. Move files with updated imports
-- `contexts/AuthContext.tsx` -> `lib/auth.tsx` (same code, export path changes)
-- `types/quotation.ts` -> `lib/types.ts` (same code)
-- `hooks/use-mobile.tsx` -> `lib/use-mobile.tsx` (same code)
-- `hooks/use-toast.ts` -> `lib/use-toast.ts` (same code, import path for toast types updated)
+**4. Endpoints / API**
+- n8n webhook URL (from `lib/constants.ts`)
+- Payload shape sent by `submitQuotation()` in `lib/api.ts` (all fields documented)
+- Expected response shape (`{ documentUrl: string }` or `{ body: { documentUrl } }`)
+- Note about test vs production webhook URLs
 
-### 4. Rewrite `pages/QuotationPage.tsx`
-Merge the three quotation files into one:
-- All `QuotationForm` logic (state, handlers, form layout)
-- `QuotationItemCard` component defined locally in the same file
-- `TotalsPanel` component defined locally in the same file
-- Updated imports to point to `@/lib/types`, `@/lib/auth`, etc.
+**5. How to Add/Edit Sidebar Items**
+- Step-by-step: edit the `navItems` array in `App.tsx` (line ~78)
+- Each item has: `title`, `url`, `icon` (from lucide-react), `enabled` (boolean)
+- Setting `enabled: false` shows the item grayed out with a "Soon" badge
+- Setting `enabled: true` makes it a clickable nav link
+- Must also add the corresponding `<Route>` in the `<Routes>` block
+- Must create the page file in `src/pages/`
 
-### 5. Create `pages/LoginPage.tsx`
-Same content as current `LoginScreen.tsx`, just moved and with updated import for auth context (`@/lib/auth`).
+**6. How to Add a New Form Page**
+- Create a new file in `src/pages/` (e.g., `DeliveryReceiptPage.tsx`)
+- Follow the pattern from `QuotationPage.tsx`: local sub-components, state with `useState`, submit via `lib/api.ts`
+- Add the route in `App.tsx`
+- Add the sidebar entry in `navItems`
 
-### 6. Rewrite `App.tsx`
-Inline three small components:
-- `AppLayout` (the sidebar + outlet wrapper, ~35 lines)
-- `NavLink` (a thin wrapper around React Router's NavLink, ~15 lines)
-- `AppSidebar` (the sidebar component, ~120 lines)
-- The `Index` redirect (`/` -> `/quotation`) becomes a direct `Navigate` in the route config
-- All imports updated to new paths
+**7. Authentication**
+- Google Sign-In via GSI library (loaded in `index.html`)
+- Allowed users whitelist in `lib/constants.ts` (`ALLOWED_USERS` map of email to branch)
+- Auth flow: JWT decoded client-side, email checked against whitelist, session stored in localStorage
+- `useAuth()` hook provides `user`, `isLoading`, `error`, `logout`, `loginAsDemo`
+- Protected routes: `AppLayout` redirects to `/login` if no user
 
-### 7. Update `toaster.tsx` import
-Change `import { useToast } from "@/hooks/use-toast"` to `import { useToast } from "@/lib/use-toast"`.
+**8. Constants & Configuration**
+- `GOOGLE_CLIENT_ID` -- Google OAuth client ID
+- `N8N_WEBHOOK_URL` -- webhook endpoint
+- `ALLOWED_USERS` -- email-to-branch mapping
+- `SALUTATION_OPTIONS` and `DOWNPAYMENT_OPTIONS` -- dropdown data
 
-## What stays exactly the same
-- All backend logic (n8n webhook calls, Google OAuth flow)
-- All styling, animations, and visual design
-- All routing paths (`/login`, `/quotation`, `/invoice`, `/purchase-order`)
-- `lib/api.ts`, `lib/constants.ts`, `lib/google-auth.ts`, `lib/utils.ts`
-- `main.tsx`, `index.css`
-- All 15 kept UI components (same code, just fewer neighbors)
+**9. Type Definitions**
+- All types from `lib/types.ts`: `QuotationItem`, `QuotationFormData`, `AuthUser`, `SubmissionResult`
 
+**10. Development Notes**
+- How to run locally (`npm run dev`)
+- UI components from shadcn/ui (15 kept in `components/ui/`)
+- Icons from `lucide-react`
+- Animations via `framer-motion`
+
+## Technical Details
+
+- Single file: `docs/README.md`
+- Written in Markdown with clear headings, code blocks, and tables
+- Includes copy-pasteable code snippets for common tasks (adding sidebar items, adding new pages)
+- No changes to any existing source files
