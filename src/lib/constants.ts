@@ -25,3 +25,17 @@ export const DOWNPAYMENT_OPTIONS = [
   { value: "80", label: "80%" },
   { value: "custom", label: "Custom" },
 ];
+
+export const PAYMENT_TYPE_OPTIONS = [
+  { value: "Down Payment", label: "Down Payment" },
+  { value: "Partial Payment", label: "Partial Payment" },
+  { value: "Full Payment", label: "Full Payment" },
+];
+
+export const MODE_OF_PAYMENT_OPTIONS = [
+  { value: "Cash", label: "Cash" },
+  { value: "GCash", label: "GCash" },
+  { value: "Check", label: "Check" },
+  { value: "Bank Transfer - BDO", label: "Bank Transfer - BDO" },
+  { value: "Bank Transfer - BPI", label: "Bank Transfer - BPI" },
+];
