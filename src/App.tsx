@@ -79,7 +79,7 @@ NavLink.displayName = "NavLink";
 
 const navItems = [
   { title: "Quotation", url: "/quotation", icon: FileText, enabled: true },
-  { title: "Acknowledgement Receipt", url: "/acknowledgement-receipt", icon: ClipboardCheck, enabled: true },
+  { title: "Acknowledgement", url: "/acknowledgement-receipt", icon: ClipboardCheck, enabled: true },
   { title: "Invoice", url: "/invoice", icon: Receipt, enabled: false },
   { title: "Purchase Order", url: "/purchase-order", icon: ShoppingCart, enabled: false },
 ];
