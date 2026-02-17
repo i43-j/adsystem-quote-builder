@@ -17,6 +17,7 @@ import {
   FileText,
   Receipt,
   ShoppingCart,
+  ClipboardCheck,
   LogOut,
   ChevronRight,
 } from "lucide-react";
@@ -26,6 +27,7 @@ import { LoginPage } from "@/pages/LoginPage";
 import QuotationPage from "@/pages/QuotationPage";
 import InvoicePage from "@/pages/InvoicePage";
 import PurchaseOrderPage from "@/pages/PurchaseOrderPage";
+import AcknowledgementReceiptPage from "@/pages/AcknowledgementReceiptPage";
 import NotFound from "@/pages/NotFound";
 import {
   Sidebar,
@@ -77,6 +79,7 @@ NavLink.displayName = "NavLink";
 
 const navItems = [
   { title: "Quotation", url: "/quotation", icon: FileText, enabled: true },
+  { title: "Acknowledgement Receipt", url: "/acknowledgement-receipt", icon: ClipboardCheck, enabled: true },
   { title: "Invoice", url: "/invoice", icon: Receipt, enabled: false },
   { title: "Purchase Order", url: "/purchase-order", icon: ShoppingCart, enabled: false },
 ];
@@ -283,6 +286,7 @@ const App = () => (
             <Route element={<AppLayout />}>
               <Route path="/" element={<Navigate to="/quotation" replace />} />
               <Route path="/quotation" element={<QuotationPage />} />
+              <Route path="/acknowledgement-receipt" element={<AcknowledgementReceiptPage />} />
               <Route path="/invoice" element={<InvoicePage />} />
               <Route path="/purchase-order" element={<PurchaseOrderPage />} />
             </Route>

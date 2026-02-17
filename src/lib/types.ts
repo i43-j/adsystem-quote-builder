@@ -26,6 +26,20 @@ export interface AuthUser {
   branch: string;
 }
 
+export interface AcknowledgementReceiptFormData {
+  date: string;
+  receivedDate: string;
+  clientName: string;
+  phoneNumber: string;
+  companyName: string;
+  address: string;
+  amount: string;
+  paymentType: string;
+  projectType: string;
+  modeOfPayment: string;
+  referenceNumber: string;
+}
+
 export interface SubmissionResult {
   success: boolean;
   documentUrl?: string;
