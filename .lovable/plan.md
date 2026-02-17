@@ -1,77 +1,87 @@
 
 
-# Create Project Documentation
+# Add Acknowledgement Receipt Form
 
 ## Summary
-Create a comprehensive `docs/README.md` file that covers the full project: file structure, styling system, endpoints, how to add/edit sidebar items, form patterns, authentication flow, and development conventions.
+Create a new Acknowledgement Receipt page, add it to the sidebar and routes, and update the API to include a `docType` field in all webhook payloads so n8n can distinguish between document types.
 
-## File to Create
+## Changes
 
-**`docs/README.md`** -- a single documentation file covering everything:
+### 1. Update `src/lib/constants.ts`
+Add two new dropdown option arrays:
+- `PAYMENT_TYPE_OPTIONS`: Down Payment, Partial Payment, Full Payment
+- `MODE_OF_PAYMENT_OPTIONS`: Cash, GCash, Check, Bank Transfer - BDO, Bank Transfer - BPI
 
-### Sections
+### 2. Update `src/lib/types.ts`
+Add a new interface:
+```
+AcknowledgementReceiptFormData {
+  date: string
+  receivedDate: string
+  clientName: string
+  phoneNumber: string
+  companyName: string
+  address: string
+  amount: string
+  paymentType: string
+  projectType: string
+  modeOfPayment: string
+  referenceNumber: string
+}
+```
 
-**1. Project Overview**
-- What the app does (internal tool for generating quotations, invoices, purchase orders for Adsystems)
-- Tech stack: React 18, Vite, TypeScript, Tailwind CSS, Framer Motion
+### 3. Update `src/lib/api.ts`
+- Add `docType: "quotation"` to the existing `submitQuotation` payload so n8n can identify it
+- Add a new `submitAcknowledgementReceipt()` function that posts form data to the same webhook with `docType: "acknowledgement_receipt"`
+- Both functions share the same response-handling logic (parse documentUrl, handle empty bodies)
 
-**2. File Structure**
-- Full tree of `src/` with one-line descriptions of every file
-- Organized by folder: `pages/`, `lib/`, `components/ui/`, `assets/`
-- Explain the "fully minimal" philosophy: no extra folders, sub-components inlined into pages
+### 4. Create `src/pages/AcknowledgementReceiptPage.tsx`
+A self-contained form page following the QuotationPage pattern:
+- Branch displayed as read-only text (from the logged-in user)
+- Date and Received Date default to today
+- Client Name, Phone Number (required); Company, Address (optional)
+- Amount as a text input (e.g. "20000.00")
+- Payment Type and Mode of Payment as select dropdowns
+- Project Type as a text input
+- Reference Number -- conditionally shown only when mode of payment is GCash, Check, or Bank Transfer (hidden for Cash)
+- Submit button posts via `submitAcknowledgementReceipt()` with success/error feedback matching the quotation page
 
-**3. Styling & Layout**
-- CSS variables defined in `index.css` (color tokens like `--primary`, `--background`, etc.)
-- How to use them: `hsl(var(--primary))` or Tailwind classes like `bg-primary`, `text-muted-foreground`
-- Custom utility classes: `glass-card`, `gradient-primary`, `gradient-sidebar`, `text-gradient`
-- Tailwind config highlights: custom animations (`fade-in`, `slide-in-right`, `scale-in`, `pulse-soft`), `success` color palette, `sidebar` color palette
-- Layout structure: `SidebarProvider` wrapping a flex container, sticky header with `SidebarTrigger`, main content area with responsive padding
+### 5. Update `src/App.tsx`
+- Import `ClipboardCheck` icon from lucide-react
+- Import `AcknowledgementReceiptPage`
+- Add to `navItems`: `{ title: "Acknowledgement Receipt", url: "/acknowledgement-receipt", icon: ClipboardCheck, enabled: true }`
+- Add route: `<Route path="/acknowledgement-receipt" element={<AcknowledgementReceiptPage />} />`
 
-**4. Endpoints / API**
-- n8n webhook URL (from `lib/constants.ts`)
-- Payload shape sent by `submitQuotation()` in `lib/api.ts` (all fields documented)
-- Expected response shape (`{ documentUrl: string }` or `{ body: { documentUrl } }`)
-- Note about test vs production webhook URLs
-
-**5. How to Add/Edit Sidebar Items**
-- Step-by-step: edit the `navItems` array in `App.tsx` (line ~78)
-- Each item has: `title`, `url`, `icon` (from lucide-react), `enabled` (boolean)
-- Setting `enabled: false` shows the item grayed out with a "Soon" badge
-- Setting `enabled: true` makes it a clickable nav link
-- Must also add the corresponding `<Route>` in the `<Routes>` block
-- Must create the page file in `src/pages/`
-
-**6. How to Add a New Form Page**
-- Create a new file in `src/pages/` (e.g., `DeliveryReceiptPage.tsx`)
-- Follow the pattern from `QuotationPage.tsx`: local sub-components, state with `useState`, submit via `lib/api.ts`
-- Add the route in `App.tsx`
-- Add the sidebar entry in `navItems`
-
-**7. Authentication**
-- Google Sign-In via GSI library (loaded in `index.html`)
-- Allowed users whitelist in `lib/constants.ts` (`ALLOWED_USERS` map of email to branch)
-- Auth flow: JWT decoded client-side, email checked against whitelist, session stored in localStorage
-- `useAuth()` hook provides `user`, `isLoading`, `error`, `logout`, `loginAsDemo`
-- Protected routes: `AppLayout` redirects to `/login` if no user
-
-**8. Constants & Configuration**
-- `GOOGLE_CLIENT_ID` -- Google OAuth client ID
-- `N8N_WEBHOOK_URL` -- webhook endpoint
-- `ALLOWED_USERS` -- email-to-branch mapping
-- `SALUTATION_OPTIONS` and `DOWNPAYMENT_OPTIONS` -- dropdown data
-
-**9. Type Definitions**
-- All types from `lib/types.ts`: `QuotationItem`, `QuotationFormData`, `AuthUser`, `SubmissionResult`
-
-**10. Development Notes**
-- How to run locally (`npm run dev`)
-- UI components from shadcn/ui (15 kept in `components/ui/`)
-- Icons from `lucide-react`
-- Animations via `framer-motion`
+### 6. Update `docs/README.md`
+Add Acknowledgement Receipt to the documentation -- new types, constants, API function, and sidebar entry.
 
 ## Technical Details
 
-- Single file: `docs/README.md`
-- Written in Markdown with clear headings, code blocks, and tables
-- Includes copy-pasteable code snippets for common tasks (adding sidebar items, adding new pages)
-- No changes to any existing source files
+**Conditional reference number logic:**
+```ts
+const showRef = !["Cash", ""].includes(formData.modeOfPayment);
+```
+When mode switches back to Cash, the reference number value is cleared automatically.
+
+**Webhook payload shape for Acknowledgement Receipt:**
+```json
+{
+  "docType": "acknowledgement_receipt",
+  "userEmail": "user@example.com",
+  "branch": "manila",
+  "date": "2026-02-17",
+  "receivedDate": "2026-02-17",
+  "clientName": "Juan Dela Cruz",
+  "phoneNumber": "09171234567",
+  "companyName": "ABC Corp",
+  "address": "123 Rizal Ave",
+  "amount": "20000.00",
+  "paymentType": "Down Payment",
+  "projectType": "Signage Installation",
+  "modeOfPayment": "GCash",
+  "referenceNumber": "1234567890",
+  "timestamp": "2026-02-17T08:30:00.000Z"
+}
+```
+
+The existing quotation payload will also gain `"docType": "quotation"` so both document types can be routed in n8n.
