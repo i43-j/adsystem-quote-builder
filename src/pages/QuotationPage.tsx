@@ -424,11 +424,9 @@ export default function QuotationPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {SALUTATION_OPTIONS.map((opt) => (
-                    <SelectItem key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </SelectItem>
-                  ))}
+                  <SelectItem value="Sir">Sir</SelectItem>
+                  <SelectItem value="Ma'am">Ma'am</SelectItem>
+                  <SelectItem value="None">None</SelectItem>
                 </SelectContent>
               </Select>
             </div>
