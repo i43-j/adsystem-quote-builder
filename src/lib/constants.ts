@@ -6,7 +6,8 @@ export const N8N_WEBHOOK_URL =
 
 export const ALLOWED_USERS: Record<string, string> = {
   "workingforthebigg@gmail.com": "test",
-  "malupa.macdaver@shap.edu.ph": "test",
+  "malupa.macdaver@shap.edu.ph": "pasig",
+  "adsystemmedia@gmail.com": "pasig",
 };
 
 export const SALUTATION_OPTIONS = [
