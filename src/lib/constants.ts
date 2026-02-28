@@ -12,9 +12,7 @@ export const ALLOWED_USERS: Record<string, string> = {
 export const SALUTATION_OPTIONS = [
   { value: "Sir", label: "Sir" },
   { value: "Ma'am", label: "Ma'am" },
-  { value: "Mr.", label: "Mr." },
-  { value: "Mrs.", label: "Mrs." },
-  { value: "Ms.", label: "Ms." },
+  { value: "None", label: "None" },
 ];
 
 export const DOWNPAYMENT_OPTIONS = [
